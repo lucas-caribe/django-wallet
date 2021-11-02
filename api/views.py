@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .serializers import ExpenseSerializer
 from .models import Expense, Currency, Tag, PaymentMethod
@@ -67,13 +68,33 @@ def edit_expense(request, expense_id):
   payload = request.data
 
   try:
-    expense_item = Expense.objects.filter(user_id=user_id, id=expense_id)
+    expense_item = Expense.objects.get(user_id=user_id, id=expense_id)
     expense_item.update(**payload)
 
     expense = Expense.objects.get(id=expense_id)
     serializer = ExpenseSerializer(expense)
 
     return JsonResponse({ 'expense': serializer.data }, safe=False, status=status.HTTP_200_OK)
+  except ObjectDoesNotExist as e:
+    return JsonResponse({'error': str(e)}, safe=False, status=status.HTTP_404_NOT_FOUND)
+  except Exception:
+    return JsonResponse(
+      {'error': 'Something went wrong'},
+      safe=False,
+      status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
+
+@api_view(["DELETE"])
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def delete_expense(request, expense_id):
+  user_id = request.user.id
+  
+  try:
+    expense = Expense.objects.get(user_id=user_id, id=expense_id)
+    expense.delete()
+
+    return Response(status.HTTP_200_OK)
   except ObjectDoesNotExist as e:
     return JsonResponse({'error': str(e)}, safe=False, status=status.HTTP_404_NOT_FOUND)
   except Exception:
