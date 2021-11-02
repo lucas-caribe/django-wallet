@@ -20,8 +20,8 @@ def welcome(request):
 @csrf_exempt
 @permission_classes([IsAuthenticated])
 def get_expenses(request):
-  user = request.user.id
-  expenses = Expense.objects.filter(user_id=user)
+  user_id = request.user.id
+  expenses = Expense.objects.filter(user_id=user_id)
   serializer = ExpenseSerializer(expenses, many=True)
 
   return JsonResponse({'expenses': serializer.data}, safe=False, status=status.HTTP_200_OK)
@@ -52,9 +52,33 @@ def add_expense(request):
     return JsonResponse({'expenses': serializer.data}, safe=False, status=status.HTTP_201_CREATED)
   except ObjectDoesNotExist as e:
     return JsonResponse({'error': str(e)}, safe=False, status=status.HTTP_404_NOT_FOUND)
-  except Exception as e:
+  except Exception:
     return JsonResponse(
-      {'error': str(e)},
+      {'error': 'Something went wrong'},
+      safe=False,
+      status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
+
+@api_view(["PUT"])
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def edit_expense(request, expense_id):
+  user_id = request.user.id
+  payload = request.data
+
+  try:
+    expense_item = Expense.objects.filter(user_id=user_id, id=expense_id)
+    expense_item.update(**payload)
+
+    expense = Expense.objects.get(id=expense_id)
+    serializer = ExpenseSerializer(expense)
+
+    return JsonResponse({ 'expense': serializer.data }, safe=False, status=status.HTTP_200_OK)
+  except ObjectDoesNotExist as e:
+    return JsonResponse({'error': str(e)}, safe=False, status=status.HTTP_404_NOT_FOUND)
+  except Exception:
+    return JsonResponse(
+      {'error': 'Something went wrong'},
       safe=False,
       status=status.HTTP_500_INTERNAL_SERVER_ERROR
     )
