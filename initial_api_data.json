@@ -1,0 +1,16 @@
+[
+  { "model": "api.currency", "pk": 1, "fields": { "name": "USD" } },
+  { "model": "api.currency", "pk": 2, "fields": { "name": "BRL" } },
+  { "model": "api.tag", "pk": 1, "fields": { "name": "Food" } },
+  { "model": "api.tag", "pk": 2, "fields": { "name": "Leisure" } },
+  { "model": "api.tag", "pk": 3, "fields": { "name": "Work" } },
+  { "model": "api.tag", "pk": 4, "fields": { "name": "Transport" } },
+  { "model": "api.tag", "pk": 5, "fields": { "name": "Health" } },
+  {
+    "model": "api.paymentmethod",
+    "pk": 1,
+    "fields": { "name": "Credit Card" }
+  },
+  { "model": "api.paymentmethod", "pk": 2, "fields": { "name": "Debit Card" } },
+  { "model": "api.paymentmethod", "pk": 3, "fields": { "name": "Cash" } }
+]

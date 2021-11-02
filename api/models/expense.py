@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from .currency import Currency
 from .tag import Tag
@@ -12,3 +13,4 @@ class Expense(models.Model):
   tag_id = models.ForeignKey(Tag, on_delete=models.CASCADE)
   payment_method_id = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE)
   user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(default=timezone.now)
