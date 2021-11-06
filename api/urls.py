@@ -1,10 +1,7 @@
-from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 from . import views
 
-urlpatterns = [
-  path('welcome', views.welcome),
-  path('getexpenses/', views.get_expenses),
-  path('addexpense/', views.add_expense),
-  path('editexpense/<int:expense_id>', views.edit_expense),
-  path('deleteexpense/<int:expense_id>', views.delete_expense),
-]
+router = DefaultRouter()
+router.register(r'expenses', views.ExpenseView)
+
+urlpatterns = router.urls
